@@ -4,7 +4,7 @@
 # 用法: bash /tmp/cqregime2.sh   （部署需开机密码，sudo 时会提示）
 set -e
 MD5EXP="2c01f335f40117f79f3527b5d7fff6ec"
-URL="https://cdn.jsdelivr.net/gh/qcqcgpt/cq-tmp-dist@PINSHA/cqregime2.tar.b64"
+URL="https://cdn.jsdelivr.net/gh/qcqcgpt/cq-tmp-dist@47f7b83c945d6a2f728ce9fb26e401d696d5b872/cqregime2.tar.b64"
 TOK="cubequant-dev-token"
 API="http://127.0.0.1:8700"
 
