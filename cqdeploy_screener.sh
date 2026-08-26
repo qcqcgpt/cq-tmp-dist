@@ -17,8 +17,12 @@ launchctl kickstart -k gui/$(id -u)/com.cubequant.core
 sleep 20
 echo "-- health:"
 curl -s --max-time 8 http://127.0.0.1:8700/api/health; echo
-echo "-- 恢复自动交易"
-curl -s -X POST http://127.0.0.1:8700/api/auto/start -H 'X-Cube-Token: cubequant-dev-token' -H 'Content-Type: application/json' -d '{"strategy_id":"ai_momentum_top","params":{"top_n":5,"rebalance_days":15,"use_risk_overlay":0,"use_stock_stop":1,"stock_stop":0.07,"use_atr_trail":1,"atr_mult":1.5,"use_macd_exit":1,"use_market_filter":1,"market_ma":20,"market_break":0.02,"use_dd_brake":1,"dd_warn":0.08,"dd_flat":0.12,"dd_lookback":60},"interval_sec":60,"invest_pct":0.9,"min_order_value":3000,"confirm":true}'; echo
+echo "-- 恢复自动交易(仅当部署前在运行)"
+if grep -q '"running":true' /tmp/autocfg.json 2>/dev/null; then
+  curl -s -X POST http://127.0.0.1:8700/api/auto/start -H 'X-Cube-Token: cubequant-dev-token' -H 'Content-Type: application/json' -d '{"strategy_id":"ai_momentum_top","params":{"top_n":5,"rebalance_days":15,"use_risk_overlay":0,"use_stock_stop":1,"stock_stop":0.07,"use_atr_trail":1,"atr_mult":1.5,"use_macd_exit":1,"use_market_filter":1,"market_ma":20,"market_break":0.02,"use_dd_brake":1,"dd_warn":0.08,"dd_flat":0.12,"dd_lookback":60},"interval_sec":60,"invest_pct":0.9,"min_order_value":3000,"confirm":true}'; echo
+else
+  echo "部署前自动交易为停止状态，不自动恢复（尊重手动停止）"
+fi
 echo "-- 验证因子选股(强势动量模板 top5)"
 curl -s --max-time 120 -X POST http://127.0.0.1:8700/api/screen -H 'X-Cube-Token: cubequant-dev-token' -H 'Content-Type: application/json' -d '{"factors":[{"name":"momentum_20d","weight":0.6,"direction":"desc"},{"name":"volume_trend","weight":0.4,"direction":"desc"}],"top":5}' | head -c 800; echo
 echo "-- 验证跟随策略选股(top5 按得分)"
